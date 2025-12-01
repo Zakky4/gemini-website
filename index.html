@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aetheria Code | Structural Web Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              display: ['Space Grotesk', 'sans-serif'],
+              tech: ['Orbitron', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              brand: {
+                50: '#f0fdfa',
+                100: '#ccfbf1',
+                200: '#99f6e4',
+                300: '#5eead4',
+                400: '#2dd4bf',
+                500: '#14b8a6',
+                600: '#0d9488',
+                700: '#0f766e',
+                800: '#115e59',
+                900: '#134e4a',
+                950: '#042f2e',
+              },
+              slate: {
+                850: '#1e293b', // Custom dark shade
+                950: '#020617', // Darker base
+              }
+            },
+            animation: {
+              'scanline': 'scanline 8s linear infinite',
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'grid-move': 'gridMove 20s linear infinite',
+            },
+            keyframes: {
+              scanline: {
+                '0%': { transform: 'translateY(-100%)' },
+                '100%': { transform: 'translateY(100%)' },
+              },
+              gridMove: {
+                '0%': { backgroundPosition: '0 0' },
+                '100%': { backgroundPosition: '40px 40px' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' },
+              }
+            },
+            backgroundImage: {
+              'grid-pattern': "linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)",
+              'grid-pattern-small': "linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px)",
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #020617;
+        color: #e2e8f0;
+        overflow-x: hidden;
+      }
+      
+      /* Structural Elements */
+      .bg-grid {
+        background-size: 40px 40px;
+        mask-image: linear-gradient(to bottom, transparent, 10%, black, 90%, transparent);
+        -webkit-mask-image: linear-gradient(to bottom, transparent, 10%, black, 90%, transparent);
+      }
+      
+      .bg-grid-small {
+        background-size: 10px 10px;
+      }
+
+      .glass-panel {
+        background: rgba(10, 15, 30, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      /* Spotlight Logic */
+      .spotlight-card {
+        position: relative;
+        overflow: hidden;
+        background: rgba(10, 10, 15, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: border-color 0.3s;
+      }
+      
+      .spotlight-card:hover {
+        border-color: rgba(45, 212, 191, 0.3);
+      }
+      
+      .spotlight-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          800px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+          rgba(255, 255, 255, 0.04),
+          transparent 40%
+        );
+        opacity: 0;
+        transition: opacity 0.5s;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .spotlight-card:hover::before {
+        opacity: 1;
+      }
+
+      .spotlight-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          600px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+          rgba(45, 212, 191, 0.08),
+          transparent 40%
+        );
+        opacity: 0;
+        z-index: 1;
+        transition: opacity 0.5s;
+        pointer-events: none;
+      }
+      
+      .spotlight-card:hover::after {
+        opacity: 1;
+      }
+      
+      .spotlight-content {
+        position: relative;
+        z-index: 10;
+      }
+
+      /* Text Utilities */
+      .text-gradient {
+        background: linear-gradient(to right, #ffffff 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      .text-gradient-brand {
+        background: linear-gradient(135deg, #2dd4bf 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Chat specific styles */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      
+      .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+      .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+      .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+      @keyframes typing {
+        0%, 80%, 100% { transform: scale(0); }
+        40% { transform: scale(1); }
+      }
+
+      /* HUD Corners */
+      .hud-corner {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border: 1px solid rgba(45, 212, 191, 0.5);
+        transition: all 0.3s ease;
+      }
+      .hud-corner-tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+      .hud-corner-tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+      .hud-corner-bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+      .hud-corner-br { bottom: 0; right: 0; border-left: none; border-top: none; }
+      
+      .spotlight-card:hover .hud-corner {
+        width: 20px;
+        height: 20px;
+        border-color: rgba(45, 212, 191, 0.9);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
